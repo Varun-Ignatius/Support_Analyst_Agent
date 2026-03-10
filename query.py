@@ -17,7 +17,7 @@ import vectordb
 
 
 def run_query(
-    text: str = None,
+    text: str = "",
     top: int = 10,
     severity: list = None,
     service: str = None,

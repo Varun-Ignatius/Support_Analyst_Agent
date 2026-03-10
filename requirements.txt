@@ -3,3 +3,8 @@ pyautogen>=0.2,<0.3
 
 # Config
 python-dotenv>=1.0.0
+
+# Vector DB & Embeddings
+chromadb
+sentence-transformers
+torch
