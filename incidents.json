@@ -1,0 +1,67 @@
+{
+  "incidents": [
+    {
+      "incident_id": "INC-2024-0315-001",
+      "title": "Order Service Returning 503 Errors",
+      "layer": "Application",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "reported_at": "2024-03-15T11:00:00Z",
+      "description": "Multiple users are unable to complete checkout. Orders are failing to be created and the service is returning 503 responses."
+    },
+    {
+      "incident_id": "INC-2024-0315-002",
+      "title": "Repeated Failed Login Attempts from Suspicious IP",
+      "layer": "Web Server",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "reported_at": "2024-03-15T09:30:00Z",
+      "description": "A high number of failed login attempts are being observed from a single IP address in a very short time window using a non-browser client."
+    },
+    {
+      "incident_id": "INC-2024-0315-003",
+      "title": "Deadlock Detected on Products Table",
+      "layer": "Database",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "reported_at": "2024-03-15T13:00:45Z",
+      "description": "Two concurrent transactions are conflicting when updating the same product record simultaneously, causing one of them to be rolled back."
+    },
+    {
+      "incident_id": "INC-2024-0315-004",
+      "title": "Malicious Request Patterns Detected",
+      "layer": "Network",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "reported_at": "2024-03-15T14:00:00Z",
+      "description": "A series of suspicious requests were made from a single IP in quick succession, including attempts to access restricted admin paths and inject malicious query parameters."
+    },
+    {
+      "incident_id": "INC-2024-0315-005",
+      "title": "Application Process Crashed and Restarted",
+      "layer": "Operating System",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "reported_at": "2024-03-15T11:08:00Z",
+      "description": "The application process was unexpectedly terminated by the operating system and was automatically restarted. A brief period of unavailability was observed."
+    },
+    {
+      "incident_id": "INC-2024-0315-006",
+      "title": "Emergency Deployment Executed with Incomplete Test Coverage",
+      "layer": "Deployment",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "reported_at": "2024-03-15T11:25:00Z",
+      "description": "A manual emergency deployment was triggered to address a live production issue. Some standard pipeline validation stages were skipped to reduce deployment time."
+    },
+    {
+      "incident_id": "INC-2024-0315-007",
+      "title": "Order Confirmation Emails Not Being Delivered",
+      "layer": "Application",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "reported_at": "2024-03-15T18:30:45Z",
+      "description": "Customers are not receiving order confirmation emails after completing a purchase. The notification service is reporting failures when attempting to send via the email provider."
+    }
+  ]
+}
