@@ -9,7 +9,7 @@ def create_log_analyzer(llm_config: dict) -> AssistantAgent:
         system_message="""You are a log analyzer. You receive search keywords and timestamps from the incident_analyst.
 You must use the `search_logs` python tool to query the logs. Do NOT execute bash scripts.
 When calling the `search_logs` tool, you MUST provide the `query` (string), `since` (YYYY-MM-DD HH:MM), and `until` (YYYY-MM-DD HH:MM) arguments based on the incident report time (for example, looking 1 hour before and after the incident).
-CRITICAL: You Must use only one keyword at a time for the query. Do not merge all the keywords in one query.
+CRITICAL: You Must use only one keyword at a time for the query. Do not merge all the keywords in one query. If log is identified do not search with other keywords. 
 CRITICAL: You MUST also always filter by the layer found in the incident report by passing the `file_name` argument to the tool (e.g., if layer is 'Application', filter by passing `file_name="application.log"` make sure all characters are lower case). Always consider the value of the category field in incident summary as the file name.
 Analyze the returned log snippets.
 Provide structured findings: relevant log lines, errors, warnings, and a short conclusion.
