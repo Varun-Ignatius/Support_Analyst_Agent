@@ -82,6 +82,37 @@ TOOLS = [
             },
             "required": ["incident_message"],
         },
+    },
+    {
+        "name": "search_logs",
+        "description": "Search the Better Stack Logtail database for specific keywords and filter by timestamp.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Natural language search query.",
+                },
+                "since": {
+                    "type": "string",
+                    "description": "Start time in format YYYY-MM-DD HH:MM.",
+                },
+                "until": {
+                    "type": "string",
+                    "description": "End time in format YYYY-MM-DD HH:MM.",
+                },
+                "file_name": {
+                    "type": "string",
+                    "description": "Optional file name to filter by, based on the layer.",
+                },
+                "n": {
+                    "type": "integer",
+                    "description": "Number of results. Default is 10.",
+                    "default": 10
+                }
+            },
+            "required": ["query"],
+        },
     }
 ]
 
@@ -119,24 +150,49 @@ def mcp_handler():
         tool_name = params.get("name")
         arguments = params.get("arguments", {})
 
-        if tool_name != "analyze_incident":
+        if tool_name == "analyze_incident":
+            incident_message = arguments.get("incident_message", "")
+            if not incident_message:
+                return err(-32602, "Missing required argument: incident_message")
+
+            try:
+                result = get_start_analysis()(incident_message)
+                return ok({
+                    "content": [{"type": "text", "text": result}],
+                    "isError": False,
+                })
+            except Exception as exc:
+                return ok({
+                    "content": [{"type": "text", "text": f"Error: {exc}"}],
+                    "isError": True,
+                })
+
+        elif tool_name == "search_logs":
+            query = arguments.get("query", "")
+            since = arguments.get("since")
+            until = arguments.get("until")
+            file_name = arguments.get("file_name")
+            n = arguments.get("n", 10)
+
+            if not query:
+                return err(-32602, "Missing required argument: query")
+
+            try:
+                # We reuse the search_logs function from run.py since it nicely captures query.py output
+                from run import search_logs as do_search_logs
+                result = do_search_logs(query, since, until, file_name, n)
+                return ok({
+                    "content": [{"type": "text", "text": result}],
+                    "isError": False,
+                })
+            except Exception as exc:
+                return ok({
+                    "content": [{"type": "text", "text": f"Error using search_logs: {exc}"}],
+                    "isError": True,
+                })
+
+        else:
             return err(-32601, f"Unknown tool: {tool_name}")
-
-        incident_message = arguments.get("incident_message", "")
-        if not incident_message:
-            return err(-32602, "Missing required argument: incident_message")
-
-        try:
-            result = get_start_analysis()(incident_message)
-            return ok({
-                "content": [{"type": "text", "text": result}],
-                "isError": False,
-            })
-        except Exception as exc:
-            return ok({
-                "content": [{"type": "text", "text": f"Error: {exc}"}],
-                "isError": True,
-            })
 
     # Notifications (no response needed)
     if method.startswith("notifications/"):

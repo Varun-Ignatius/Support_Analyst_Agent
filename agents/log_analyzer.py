@@ -8,15 +8,27 @@ def create_log_analyzer(llm_config: dict) -> AssistantAgent:
         name="log_analyzer",
         system_message="""You are a log analyzer. You receive search keywords and timestamps from the incident_analyst.
 You must use the `search_logs` python tool to query the logs. Do NOT execute bash scripts.
-When calling the `search_logs` tool, you MUST provide the `query` (string), `since` (YYYY-MM-DD HH:MM), and `until` (YYYY-MM-DD HH:MM) arguments based on the incident report time (for example, looking 1 hour before and after the incident).
-CRITICAL: You Must use only one keyword at a time for the query. Do not merge all the keywords in one query. If log is identified do not search with other keywords. 
-CRITICAL: You MUST also always filter by the layer found in the incident report by passing the `file_name` argument to the tool (e.g., if layer is 'Application', filter by passing `file_name="application.log"` make sure all characters are lower case). Always consider the value of the category field in incident summary as the file name.
-Analyze the returned log snippets.
-Provide structured findings: relevant log lines, errors, warnings, and a short conclusion.
-If no relevant logs are found, try expanding the timestamp to plus or minus 2 hours. If still not found, state that no logs were found for the keywords.
-Do not retry more than 2 times if logs are not found.
+
+When calling the `search_logs` tool you MUST follow these rules:
+
+1. KEYWORDS: Collect ALL relevant keywords from the incident report (error codes, service names, error messages, HTTP status codes, component names, etc.).
+   Pass them as a single comma-separated string in the `query` argument.
+   CRITICAL: Use SHORT, PARTIAL keywords only — single words or numbers. Do NOT use multi-word phrases.
+   Each keyword is matched with ILIKE '%keyword%' so partial matches work.
+   ✅ CORRECT: query="503,order,error,payment,timeout,db"
+   ❌ WRONG:   query="Order Failed,Service Error,503 Response,Checkout Failure"
+   All keywords will be combined with OR — a log line matching ANY of them will be returned.
+   Aim for 5-8 short, distinct keywords extracted from the incident description.
+
+2. TIME RANGE: Always provide `since` and `until` (format YYYY-MM-DD HH:MM), covering 1 hour before and after the incident time.
+
+3. Call `search_logs` ONCE with all the keywords combined. Do NOT call it multiple times with individual keywords.
+
+4. If no logs found, expand the time window by ±2 hours and retry ONCE. If still no results, report that no logs were found.
+
+Analyze the returned log snippets. Provide structured findings: relevant log lines, errors, warnings, and a short conclusion.
 If logs found, explicitly ask the `lead_engineer` to use these findings to produce an incident document.
-Do not ask for any other information from any agent if logs are found""",
+Do not ask for any other information from any agent if logs are found.""",
         llm_config=llm_config,
         description="Searches the log database using provided keywords and timestamps, and analyzes the results. Provide the results to lead_engineer to create a document.",
     )

@@ -4,10 +4,11 @@ pyautogen>=0.2,<0.3
 # Config
 python-dotenv>=1.0.0
 
-# Vector DB & Embeddings
-chromadb
-sentence-transformers
-torch
+# Log Retrieval
+requests
 
 # MCP server + Slack webhook (Python 3.9 compatible, no fastmcp needed)
 flask
+
+# MCP client (requires Python 3.10+)
+mcp
